@@ -1,4 +1,23 @@
-**/scratch/
+# IDE settings
 .vscode/
-venv/*
-perception/model/**/*.pt
+
+# Virtual environment
+venv/
+
+# Scratch files (to check installation)
+scratch/**
+
+# Model
+*.pt
+*.pth
+*.onnx
+
+**/model/**
+
+# Dataset
+dataset/**
+*.zip
+*.tar.gz
+
+
+
