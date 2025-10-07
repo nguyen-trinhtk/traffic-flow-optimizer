@@ -15,7 +15,7 @@ model = YOLO(PATH_TO_MODEL)
 # Run inference on UA-DETRAC dataset
 results = model(DATASET_PATH, device=device, save=False, save_txt=True)
 
-# Verify results against labels (basic check)
+# Verify results against labels (basic check) 
 n_imgs = len(results)
 n_detected = sum(len(r.boxes) for r in results)
 print(f"Processed {n_imgs} images, total detections: {n_detected}")

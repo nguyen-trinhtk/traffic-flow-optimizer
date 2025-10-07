@@ -15,7 +15,7 @@ scratch/**
 **/model/**
 
 # Dataset
-dataset/**
+datasets/**
 *.zip
 *.tar.gz
 
