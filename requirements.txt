@@ -37,3 +37,4 @@ tzdata==2025.2
 ultralytics==8.3.204
 ultralytics-thop==2.0.17
 urllib3==2.5.0
+yt-dlp==2025.10.14

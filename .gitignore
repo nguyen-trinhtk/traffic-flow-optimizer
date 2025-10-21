@@ -1,23 +1,9 @@
-# IDE settings
 .vscode/
-
-# Virtual environment
 venv/
-
-# Scratch files (to check installation)
 scratch/**
-
-# Model
-*.pt
-*.pth
-*.onnx
-
 **/model/**
+dataset/*
 
-# Dataset
-datasets/**
-*.zip
-*.tar.gz
 
 
 
