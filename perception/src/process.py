@@ -34,7 +34,7 @@ def process_video_tracking(video_path, model, tracker, conf, save_dir, show_vide
 
     video_name = os.path.splitext(os.path.basename(video_path))[0]
     output_data = {
-        "video_index": video_name,
+        "vid_id": video_name,
         "detections": mapping,
     }
 

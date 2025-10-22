@@ -4,7 +4,7 @@ from deep_sort_realtime.deepsort_tracker import DeepSort
 
 if __name__ == "__main__":
     WEIGHTS_PATH = "perception/model/best.pt"
-    VIDEO_DIR = "dataset/video"
+    VIDEO_DIR = "dataset/ucsd_video"
     CONF_THRESHOLD = 0.25
     OUTPUT_DIR = "perception/results"
     SHOW_VIDEO = False
