@@ -1,6 +1,4 @@
-import json
 import math
-
 
 def calculate_density(frame_data):
     return len(frame_data)
@@ -36,10 +34,7 @@ def process_vid_data(data, time_delta=1.0):
     vid_id = data.get("vid_id")
     frames = data.get("detections", [])
 
-    output = {
-        "vid_id": vid_id,
-        "detections": []
-    }
+    output = []
 
     prev_frame = []
     for frame in frames:
@@ -47,7 +42,7 @@ def process_vid_data(data, time_delta=1.0):
         frame_avg_speed = calculate_avg_speed(prev_frame, frame, time_delta)
         frame_flow = frame_avg_speed * frame_density
 
-        output["detections"].append({
+        output.append({
             "avg_speed": frame_avg_speed,
             "density": frame_density,
             "flow": frame_flow
@@ -55,28 +50,7 @@ def process_vid_data(data, time_delta=1.0):
 
         prev_frame = frame
 
-    return output
+    return vid_id, output
 
 
-def main():
-    json_input = {
-        "vid_id": "17",
-        "detections": [
-            [
-                {"1": [202, 180, 437, 393]},
-                {"2": [242, 185, 519, 400]}
-            ],
-            [
-                {"1": [210, 190, 445, 400]},
-                {"2": [260, 190, 530, 410]},
-                {"3": [400, 300, 450, 360]}
-            ]
-        ]
-    }
 
-    processed = process_vid_data(json_input)
-    print(json.dumps(processed, indent=4))
-
-
-if __name__ == "__main__":
-    main()
