@@ -1,6 +1,6 @@
 import sys
 import logging
-from process import *
+from perception.src.utils.processVid import *
 from ultralytics import YOLO
 from deep_sort_realtime.deepsort_tracker import DeepSort
 
