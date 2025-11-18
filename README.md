@@ -66,7 +66,7 @@ The flow prediction module is responsible for:
 * Uses these features to train a **Random Forest** regression model for traffic flow prediction.
 * Evaluates performance using standard metrics such as **MAE** and **RMSE**.
 
-Currently, I'm integrating **LSTM** networks for improved temporal modeling and long-term prediction accuracy. This also requires a richer and more diverse dataset for better accuracy.
+Currently, I'm looking at **LSTM** networks for improved temporal modeling and long-term prediction accuracy. This also requires a richer and more diverse dataset for better accuracy.
 
 ### 3. Signal Timing Optimization
 The optimization part of this project includes:
