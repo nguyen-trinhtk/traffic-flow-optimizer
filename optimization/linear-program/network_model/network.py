@@ -6,23 +6,55 @@ import networkx as nx
 import matplotlib.pyplot as plt
 
 class Network:
-    def __init__(self):
-        self.__edges = {}  # edge_id -> Edge object
+    def __init__(self, edges):
+        self.__edges = edges  # edge_id -> Edge object
         self.__paths = {}  # path_id -> Path object
         
-    def updateEdges(self, edgesMap):
-        self.__edges.update(edgesMap)
-        
-    def addEdge(self, edge):
-        self.__edges.update({edge.getId(): edge})
-        
-    def addPath(self, path):
-        # check availability of edges
-        for edge in path.getEdges():
-            eid = edge.getId()
-            if eid not in self.__edges:
-                raise ValueError(f"Unknown edge: {eid}")
-        self.__paths.update({path.getId(): path})
+    def buildPaths(self):
+        # Reset
+        self.__paths = {}
+
+        # Build adjacency list: node_id → list of outgoing edges
+        adj = {}
+        for e in self.__edges.values():
+            adj.setdefault(e.getSrcId(), []).append(e)
+
+        # Get all node IDs that appear in edges
+        nodes = set()
+        for e in self.__edges.values():
+            nodes.add(e.getSrcId())
+            nodes.add(e.getSinkId())
+        nodes = list(nodes)
+
+        # BFS from every start node
+        path_id = 0
+
+        for start in nodes:
+            queue = [(start, [])]   # (current_node, list_of_edges_used)
+
+            while queue:
+                curr, used_edges = queue.pop(0)
+
+                # If path length >= 1 -> valid full path
+                if used_edges:
+                    p = Path(used_edges)
+                    self.__paths[p.getId()] = p
+
+                # No outgoing edges
+                if curr not in adj:
+                    continue
+
+                # Explore edges
+                for e in adj[curr]:
+                    next_node = e.getSinkId()
+
+                    # Prevent cycles
+                    visited_nodes = {e.getSrcId() for e in used_edges}
+                    visited_nodes.add(curr)
+                    if next_node in visited_nodes:
+                        continue
+                    queue.append((next_node, used_edges + [e]))
+
         
     def buildIncidenceMatrix(self):
         edge_ids = list(self.__edges.keys())
@@ -31,13 +63,10 @@ class Network:
         m = len(edge_ids)
         n = len(path_ids)
         
-        # Create a zero matrix of size m x n
         A = np.zeros((m, n), dtype=int)
         
-        # Build a mapping from edge_id to row index
         edge_index = {eid: i for i, eid in enumerate(edge_ids)}
         
-        # Build the incidence matrix
         for j, pid in enumerate(path_ids):
             path = self.__paths[pid]
             for edge in path.getEdges():
@@ -46,7 +75,7 @@ class Network:
                 
         return A
     
-    # ------------------ Interactive Visualizer ------------------
+
     def visualize(self):
         G = nx.DiGraph()
 
@@ -66,17 +95,7 @@ class Network:
         nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_size=10)
 
         # TODO: path highlighting
-        # colors = ['red', 'green', 'blue', 'orange', 'purple']
-        # for idx, path in enumerate(self.__paths.values()):
-        #     path_edges = [(e.getSrcId(), e.getSinkId()) for e in path.getEdges()]
-        #     nx.draw_networkx_edges(
-        #         G, pos,
-        #         edgelist=path_edges,
-        #         edge_color=colors[idx % len(colors)],
-        #         width=3,
-        #         arrowstyle='-|>',
-        #         arrowsize=20
-        #     )
+
         plt.title("Traffic Network Graph")
         plt.axis('off')
         plt.show()
