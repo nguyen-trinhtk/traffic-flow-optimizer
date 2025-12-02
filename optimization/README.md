@@ -1,188 +1,193 @@
 # **Traffic Flow Optimization Using Linear Programming**
 
-This project formulates and solves a traffic-flow optimization problem on a directed network. Each path has a congestion threshold, and each road segment has a finite capacity. The objective is to maximize total usable traffic flow while respecting congestion and capacity constraints.
+This project formulates and solves a traffic-flow optimization problem over a directed network.
+Each path has a congestion threshold, and each road segment has a finite capacity.
+The goal is to **maximize total usable traffic flow** while enforcing congestion and capacity limits.
 
 ---
 
 ## **Problem Set-Up**
 
-In general, a traffic network has multiple alternative paths to travel between an origin and destination.
-Each directed road segment has a capacity representing the maximum flow it can support, and each path has a congestion threshold indicating when flow becomes inefficient.
+A traffic network contains several alternative routes between an origin and destination.
+Each directed road segment (edge) has a finite capacity, and each path has a congestion threshold indicating when traffic becomes inefficient.
 
-Hence, a central question is established:
+Thus the core question becomes:
 
-> **How can we maximize total traffic through the network while controlling congestion and preventing capacity violations?**
+> **How can we maximize overall network throughput while preventing congestion and avoiding capacity violations?**
 
 ---
 
 ## **Graph Networks**
 
-Traffic is represented using a **directed graph**:
+Traffic is modeled as a **directed graph**:
 
-* **Nodes:** intersections
-* **Edges:** directed road segments, each with a capacity
-* **Paths:** sequences of edges from a source to a sink
+* **Nodes** = intersections
+* **Edges** = directed road segments, each with a capacity
+* **Paths** = sequences of edges from a source to a sink
 
-All feasible (source → sink) paths are discovered using BFS/DFS. These paths become the decision variables in the optimization model.
+All feasible paths (source → destination) can be discovered using BFS or DFS.
+These paths become the **decision variables** in the optimization model.
 
 ---
 
 ## **Translation into Mathematics**
 
-The model uses the following notation:
+We define:
 
-* **Edges:**
-
-  * ( m ) total
-  * Capacities: ( b_i )
-
-* **Paths:**
-
-  * ( n ) total
-  * Flow variables: ( x_j )
-  * Congestion thresholds: ( c_k )
+* $m$ = number of edges
+* $b_i$ = capacity of edge $i$
+* $n$ = number of paths
+* $x_j$ = flow rate on path $j$
+* $c_k$ = congestion threshold for path $k$
 
 ### **Incidence Matrix**
 
 Let
-[
-A \in \mathbb{R}^{m \times n}, \qquad
-A_{ij} =
-\begin{cases}
-1 & \text{if path } j \text{ uses edge } i \
-0 & \text{otherwise}
-\end{cases}
-]
 
-Then the total load on edge ( i ) is:
-[
+$$
+A \in \mathbb{R}^{m \times n},
+\qquad A_{ij} = 1 \text{ if path } j \text{ uses edge } i \text{, }
+0 \text{ otherwise.}
+$$
+
+The load on edge $i$ is
+
+$$
 (Ax)_i
-]
+$$
 
 ### **Capacity Constraint**
 
-[
+$$
 Ax \le b
-]
+$$
 
 ### **Utility Function (piecewise linear)**
 
-For each path:
-[
-f_k(x_k) =
-\begin{cases}
-x_k, & x_k \le c_k \
-\frac{x_k + c_k}{2}, & x_k > c_k
-\end{cases}
-]
+Each path contributes utility
+
+$$
+y_k= min ( x_k, \frac{x_k + c_k}{2} )
+$$
 
 ### **Network Optimization Problem**
 
-[
-\max \sum_{k=1}^n f_k(x_k)
-\quad \text{s.t.} \quad
-Ax \le b,;
+$$
+\max \sum_{k=1}^n y_k
+\quad
+\text{s.t.}
+\quad
+Ax \le b\quad
 x \ge 0
-]
+$$
 
 ---
 
 ## **Standardizing the Linear Program**
 
-To convert the piecewise objective into a linear program, we introduce auxiliary variables ( y_k ) representing the utility value.
+To linearize the objective, introduce auxiliary variables $y_k$ representing utility for each path.
 
 ### **Decision Vector**
 
-[
+$$
 z =
 \begin{bmatrix}
-x_1 \ \vdots \ x_n \ y_1 \ \vdots \ y_n
-\end{bmatrix}
+x_1 \ ... \ x_n \quad y_1 \ ... \ y_n
+\end{bmatrix}^T
 \in \mathbb{R}^{2n}
-]
+$$
 
-### **Objective (maximize total utility)**
+### **Objective Function**
 
-[
+$$
 p =
 \begin{bmatrix}
-0 \ \vdots \ 0 \ 1 \ \vdots \ 1
+0 \ ... \ 0 \quad 1 \ ... \ 1
 \end{bmatrix}
-]
+$$
 
-[
-\max\ p^T z
-]
+$$
+\max \quad p^T z
+$$
 
 ---
 
 ### **Constraint 1 — Edge Capacities**
 
-[
-A_1 = [A ;; 0_{m \times n}], \qquad b_1 = b
-]
+Extend $A$ with zeros to include $y$ variables:
 
-[
+$$
+A_1 = \begin{bmatrix} A \quad 0_{m \times n} \end{bmatrix},
+\qquad
+b_1 = b
+$$
+
+$$
 A_1 z \le b_1
-]
+$$
 
 ---
 
-### **Constraint 2 — Linearizing ( y_k \le x_k )**
+### **Constraint 2 — Linearizing $y_k \le x_k$**
 
-[
-A_2 = [-I_n ;; I_n], \qquad b_2 = 0
-]
+$$
+A_2 = \begin{bmatrix} -I_n \quad I_n \end{bmatrix},
+\qquad
+b_2 = 0
+$$
 
-[
+$$
 A_2 z \le b_2
-]
+$$
 
 ---
 
-### **Constraint 3 — Linearizing ( y_k \le 0.5x_k + 0.5c_k )**
+### **Constraint 3 — Linearizing $y_k \le 0.5x_k + 0.5c_k$**
 
-[
-A_3 = [-0.5 I_n ;; I_n], \qquad b_3 = 0.5c
-]
+$$
+A_3 = \begin{bmatrix} -0.5 I_n \quad I_n \end{bmatrix},
+\qquad
+b_3 = 0.5c
+$$
 
-[
+$$
 A_3 z \le b_3
-]
+$$
 
 ---
 
 ### **Final LP Form**
 
-[
-A_{\text{LP}} =
+$$
+A_{\text{LP}}=
 \begin{bmatrix}
 A_1 \ A_2 \ A_3
 \end{bmatrix},
 \qquad
-b_{\text{LP}} =
+b_{\text{LP}}=
 \begin{bmatrix}
 b_1 \ b_2 \ b_3
 \end{bmatrix}
-]
+$$
 
-[
-\max p^T z
+The final linear program is:
+
+$$
+\max \quad p^T z
 \quad \text{s.t.} \quad
-A_{\text{LP}} z \le b_{\text{LP}},;
+A_{\text{LP}} z \le b_{\text{LP}}, \quad
 z \ge 0
-]
+$$
 
 ---
 
 ## **Solving**
 
-The LP is solved using SciPy’s `linprog` solver (simplex or interior point).
-A future extension is a custom implementation of the **dual simplex method** for specialized networks or performance tuning.
+The LP is currently solved using SciPy’s `linprog`.
+Theoretically, this problem can be effectively solved using the **dual simplex** method by forming a dual tableau and executing appropriate Jordan exchanges.
 
 ---
 
 ## **Reference**
 
-The optimization framework is inspired by Exercise 102 from *Linear Programming Exercises* by Lieven Vandenberghe, Electrical Engineering Department, University of California, Los Angeles (2013–2014). The formulation follows the classical structure of capacity-constrained multi-path network flow problems with convexified utility.
-
+This formulation is inspired by **Exercise 102** from *Linear Programming Exercises* by Lieven Vandenberghe, UCLA, 2013–2014. It follows the standard structure of capacity-constrained, multi-path network flow optimization with convexified utility.
