@@ -25,7 +25,7 @@ Traffic is modeled as a **directed graph**:
 * **Edges** = directed road segments, each with a capacity
 * **Paths** = sequences of edges from a source to a sink
 
-All feasible paths (source → destination) can be discovered using BFS or DFS.
+All feasible paths (source → destination) are discovered using BFS.
 These paths become the **decision variables** in the optimization model.
 
 ---
