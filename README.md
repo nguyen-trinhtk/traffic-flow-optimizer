@@ -75,8 +75,7 @@ The optimization module includes:
 * Simulating traffic networks using directed graphs.
 * Determining capacities, thresholds, and flow constraints for each edge and path.
 * Formulating graph-based Linear Programming (LP) problems to optimize network flow and regulate congestion.
-* Detailed mathematical setup is documented in [./optimization/README.md](./optimization/README.md)
-`.
+* Detailed mathematical setup is documented in [./optimization/README.md](./optimization/README.md).
 
 
 <!-- The current implementation is more of a theoretical localized solution to the optimization problem. For a more generalized approach, I'm working on incorporating realistic simulations via **SuMO**, then develop **MDP-RL** based on such simulations for an adaptive, real-time traffic signal control. -->
