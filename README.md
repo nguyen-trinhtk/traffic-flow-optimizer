@@ -6,7 +6,7 @@ This project is a Python-based framework designed to automate the **optimization
 
 * **Perception** – Detects and tracks vehicles from video data.
 * **Flow Prediction** – Computes real-time traffic flow metrics and predicts future trends using machine learning models.
-* **Flow Optimization** – Determines optimal traffic signal timings to minimize congestion and improve throughput.
+* **Flow Optimization** – Determines network flow rate for different routes to maximize throughput and regulate congestion.
 
 ## Repository Structure
 ```
@@ -14,9 +14,12 @@ This project is a Python-based framework designed to automate the **optimization
 ├── dataset
 ├── optimization
 │   ├── linear-program/
-│   └── mdp/
+│   │   ├── network_model/  # OOP classes for building traffic network
+│   │   ├── lp_solver.py    # Optimization solver via linear program
+│   │   └── main.py
+│   └── README.md
 ├── perception
-│   ├── model/
+│   ├── model/              # Trained model weights, not tracked
 │   ├── results/
 │   └── src
 │       ├── utils/ 
@@ -26,11 +29,9 @@ This project is a Python-based framework designed to automate the **optimization
 │   │   ├── analysis/ 
 │   │   └── dataframe/ 
 │   └── src
-│       ├── lstm/ 
 │       ├── random_forest/
 │       ├── utils/ 
 │       └── main.py
-├── utils/
 ├── README.md
 └── requirements.txt
 ```
@@ -66,12 +67,16 @@ The flow prediction module is responsible for:
 * Uses these features to train a **Random Forest** regression model for traffic flow prediction.
 * Evaluates performance using standard metrics such as **MAE** and **RMSE**.
 
-Currently, I'm looking at **LSTM** networks for improved temporal modeling and long-term prediction accuracy. This also requires a richer and more diverse dataset for better accuracy.
+<!-- Currently, I'm looking at **LSTM** networks for improved temporal modeling and long-term prediction accuracy. This also requires a richer and more diverse dataset for better accuracy. -->
 
 ### 3. Signal Timing Optimization
-The optimization part of this project includes:
-* Simulate traffic networks with graphs.
-* * Determine known metrics and constraints specific to each edges and nodes.
-* Formulates graph-based **Linear Programming (LP)** problems to solve for approriate timing at each intersection (node).
+The optimization module includes:
 
-The current implementation is more of a theoretical localized solution to the optimization problem. For a more generalized approach, I'm working on incorporating realistic simulations via **SuMO**, then develop **MDP-RL** based on such simulations for an adaptive, real-time traffic signal control.
+* Simulating traffic networks using directed graphs.
+* Determining capacities, thresholds, and flow constraints for each edge and path.
+* Formulating graph-based Linear Programming (LP) problems to optimize network flow and regulate congestion.
+* Detailed mathematical setup is documented in [./optimization/README.md](./optimization/README.md)
+`.
+
+
+<!-- The current implementation is more of a theoretical localized solution to the optimization problem. For a more generalized approach, I'm working on incorporating realistic simulations via **SuMO**, then develop **MDP-RL** based on such simulations for an adaptive, real-time traffic signal control. -->
